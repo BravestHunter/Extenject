@@ -5,6 +5,9 @@ using ModestTree;
 #if ZEN_SIGNALS_ADD_UNIRX
 using UniRx;
 #endif
+#if ZEN_SIGNALS_ADD_R3
+using R3;
+#endif
 
 namespace Zenject
 {
@@ -36,14 +39,14 @@ namespace Zenject
             _signalDeclarationFactory = signalDeclarationFactory;
             _container = container;
 
-           signalDeclarations.ForEach(x =>
-			{
-				if (!_localDeclarationMap.ContainsKey(x.BindingId))
-				{
-					_localDeclarationMap.Add(x.BindingId, x);
-				}
-				else _localDeclarationMap[x.BindingId].Subscriptions.AllocFreeAddRange(x.Subscriptions);
-			});
+            signalDeclarations.ForEach(x =>
+             {
+                 if (!_localDeclarationMap.ContainsKey(x.BindingId))
+                 {
+                     _localDeclarationMap.Add(x.BindingId, x);
+                 }
+                 else _localDeclarationMap[x.BindingId].Subscriptions.AllocFreeAddRange(x.Subscriptions);
+             });
             _parentBus = parentBus;
         }
 
@@ -60,11 +63,11 @@ namespace Zenject
 
         //Fires Signals with their interfaces
         public void AbstractFire<TSignal>() where TSignal : new() => AbstractFire(new TSignal());
-		public void AbstractFire<TSignal>(TSignal signal) => AbstractFireId(null, signal);
-		public void AbstractFireId<TSignal>(object identifier, TSignal signal)
-		{
-			// Do this before creating the signal so that it throws if the signal was not declared
-			Type signalType = typeof(TSignal);
+        public void AbstractFire<TSignal>(TSignal signal) => AbstractFireId(null, signal);
+        public void AbstractFireId<TSignal>(object identifier, TSignal signal)
+        {
+            // Do this before creating the signal so that it throws if the signal was not declared
+            Type signalType = typeof(TSignal);
             InternalFire(signalType, signal, identifier, true);
 
             Type[] interfaces = signalType.GetInterfaces();
@@ -73,7 +76,7 @@ namespace Zenject
             {
                 InternalFire(interfaces[i], signal, identifier, true);
             }
-		}
+        }
 
         public void LateDispose()
         {
@@ -140,12 +143,12 @@ namespace Zenject
             return IsSignalDeclared(typeof(TSignal), identifier);
         }
 
-        public bool IsSignalDeclared(Type signalType)  
+        public bool IsSignalDeclared(Type signalType)
         {
             return IsSignalDeclared(signalType, null);
         }
 
-        public bool IsSignalDeclared(Type signalType, object identifier) 
+        public bool IsSignalDeclared(Type signalType, object identifier)
         {
             var signalId = new BindingId(signalType, identifier);
             return GetDeclaration(signalId) != null;
@@ -223,6 +226,28 @@ namespace Zenject
         }
 
         public IObservable<object> GetStream(Type signalType)
+        {
+            return GetStreamId(signalType, null);
+        }
+#endif
+
+#if ZEN_SIGNALS_ADD_R3
+        public Observable<TSignal> GetStreamId<TSignal>(object identifier)
+        {
+            return GetStreamId(typeof(TSignal), identifier).Select(x => (TSignal)x);
+        }
+
+        public Observable<TSignal> GetStream<TSignal>()
+        {
+            return GetStreamId<TSignal>(null);
+        }
+
+        public Observable<object> GetStreamId(Type signalType, object identifier)
+        {
+            return GetDeclaration(new BindingId(signalType, identifier)).Stream;
+        }
+
+        public Observable<object> GetStream(Type signalType)
         {
             return GetStreamId(signalType, null);
         }

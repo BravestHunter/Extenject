@@ -4,6 +4,9 @@ using ModestTree;
 #if ZEN_SIGNALS_ADD_UNIRX
 using UniRx;
 #endif
+#if ZEN_SIGNALS_ADD_R3
+using R3;
+#endif
 
 namespace Zenject
 {
@@ -16,7 +19,7 @@ namespace Zenject
         readonly bool _isAsync;
         readonly ZenjectSettings.SignalSettings _settings;
 
-#if ZEN_SIGNALS_ADD_UNIRX
+#if ZEN_SIGNALS_ADD_UNIRX || ZEN_SIGNALS_ADD_R3
         readonly Subject<object> _stream = new Subject<object>();
 #endif
 
@@ -42,7 +45,14 @@ namespace Zenject
         }
 #endif
 
-		public List<SignalSubscription> Subscriptions => _subscriptions;
+#if ZEN_SIGNALS_ADD_R3
+        public Observable<object> Stream
+        {
+            get { return _stream; }
+        }
+#endif
+
+        public List<SignalSubscription> Subscriptions => _subscriptions;
 
         public int TickPriority
         {
@@ -108,6 +118,10 @@ namespace Zenject
 #if ZEN_SIGNALS_ADD_UNIRX
                 && !_stream.HasObservers
 #endif
+#if ZEN_SIGNALS_ADD_R3
+                && false // R3 does not support 'HasObservers'
+#endif
+
                 )
             {
                 if (_missingHandlerResponses == SignalMissingHandlerResponses.Warn)
@@ -133,7 +147,7 @@ namespace Zenject
                 }
             }
 
-#if ZEN_SIGNALS_ADD_UNIRX
+#if ZEN_SIGNALS_ADD_UNIRX || ZEN_SIGNALS_ADD_R3
             _stream.OnNext(signal);
 #endif
         }
