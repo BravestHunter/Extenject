@@ -2,8 +2,9 @@ using System;
 using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 using UnityEngine.TestTools;
+using UnityEngine.AddressableAssets;
+
 
 #if UNITASK_PLUGIN
 using Cysharp.Threading.Tasks;
