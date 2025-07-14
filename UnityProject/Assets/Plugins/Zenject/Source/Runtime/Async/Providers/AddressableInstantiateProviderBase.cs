@@ -1,3 +1,4 @@
+#if EXTENJECT_INCLUDE_ADDRESSABLE_BINDINGS
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -26,7 +27,7 @@ namespace Zenject
         readonly IEnumerable<TypeValuePair> _extraArguments;
         readonly Action<InjectContext, object> _instantiateCallback;
         readonly Func<IPrefabInstantiator, IProvider> _subProviderFactory;
-        
+
         AsyncOperationHandle<Object> _loadPrefabHandle;
         IProvider _subProvider;
 
@@ -104,7 +105,7 @@ namespace Zenject
             using DisposeBlock disposeBlock = DisposeBlock.Spawn();
             List<object> buffer = disposeBlock.SpawnList<object>();
             _subProvider.GetAllInstances(inContext, inArgs, buffer);
-            return (Object) buffer[0];
+            return (Object)buffer[0];
         }
 
         void IDisposable.Dispose()
@@ -118,3 +119,4 @@ namespace Zenject
         }
     }
 }
+#endif
