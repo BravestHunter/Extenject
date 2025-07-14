@@ -1,3 +1,4 @@
+#if EXTENJECT_INCLUDE_ADDRESSABLE_BINDINGS
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -46,3 +47,4 @@ namespace Zenject.Tests.IntegrationTests.Async.Addressable
         }
     }
 }
+#endif

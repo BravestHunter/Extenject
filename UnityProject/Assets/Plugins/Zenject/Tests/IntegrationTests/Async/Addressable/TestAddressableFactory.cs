@@ -1,10 +1,10 @@
+#if EXTENJECT_INCLUDE_ADDRESSABLE_BINDINGS
 using System;
 using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 using UnityEngine.AddressableAssets;
-
 
 #if UNITASK_PLUGIN
 using Cysharp.Threading.Tasks;
@@ -162,3 +162,4 @@ namespace Zenject.Tests.IntegrationTests.Async.Addressable
         }
     }
 }
+#endif

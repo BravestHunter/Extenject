@@ -1,7 +1,7 @@
+#if EXTENJECT_INCLUDE_ADDRESSABLE_BINDINGS
 using System;
 using System.Collections.Generic;
 using UnityEngine.AddressableAssets;
-
 
 namespace Zenject
 {
@@ -30,3 +30,4 @@ namespace Zenject
         }
     }
 }
+#endif

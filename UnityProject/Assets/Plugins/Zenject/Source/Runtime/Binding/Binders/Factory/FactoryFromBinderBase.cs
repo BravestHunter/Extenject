@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
-using ModestTree;
 
 #if !NOT_UNITY3D
 using UnityEngine;
+#if EXTENJECT_INCLUDE_ADDRESSABLE_BINDINGS
 using UnityEngine.AddressableAssets;
+#endif
 #endif
 
 namespace Zenject
@@ -186,7 +187,7 @@ namespace Zenject
                     ContractType,
                     new PrefabInstantiator(
                         container, gameObjectInfo,
-                        ContractType, new[] {ContractType}, BindInfo.Arguments,
+                        ContractType, new[] { ContractType }, BindInfo.Arguments,
                         new PrefabProvider(prefab), BindInfo.InstantiatedCallback));
 
             return new NameTransformScopeConcreteIdArgConditionCopyNonLazyBinder(BindInfo, gameObjectInfo);
@@ -204,13 +205,14 @@ namespace Zenject
                     ContractType,
                     new PrefabInstantiator(
                         container, gameObjectInfo,
-                        ContractType, new[] {ContractType}, BindInfo.Arguments,
+                        ContractType, new[] { ContractType }, BindInfo.Arguments,
                         new PrefabProvider(prefab),
                         BindInfo.InstantiatedCallback), true);
 
             return new NameTransformScopeConcreteIdArgConditionCopyNonLazyBinder(BindInfo, gameObjectInfo);
         }
 
+#if EXTENJECT_INCLUDE_ADDRESSABLE_BINDINGS
         public NameTransformScopeConcreteIdArgConditionCopyNonLazyBinder FromComponentInAssetReference(AssetReference prefab)
         {
             BindingUtil.AssertIsInterfaceOrComponent(ContractType);
@@ -246,6 +248,7 @@ namespace Zenject
 
             return new NameTransformScopeConcreteIdArgConditionCopyNonLazyBinder(BindInfo, gameObjectInfo);
         }
+#endif
 
         public NameTransformScopeConcreteIdArgConditionCopyNonLazyBinder FromComponentInNewPrefabResource(string resourcePath)
         {
@@ -259,7 +262,7 @@ namespace Zenject
                     ContractType,
                     new PrefabInstantiator(
                         container, gameObjectInfo,
-                        ContractType, new[] {ContractType}, BindInfo.Arguments,
+                        ContractType, new[] { ContractType }, BindInfo.Arguments,
                         new PrefabProviderResource(resourcePath), BindInfo.InstantiatedCallback), true);
 
             return new NameTransformScopeConcreteIdArgConditionCopyNonLazyBinder(BindInfo, gameObjectInfo);
@@ -278,7 +281,7 @@ namespace Zenject
                     ContractType,
                     new PrefabInstantiator(
                         container, gameObjectInfo,
-                        ContractType, new[] {ContractType}, BindInfo.Arguments,
+                        ContractType, new[] { ContractType }, BindInfo.Arguments,
                         new PrefabProviderResource(resourcePath),
                         BindInfo.InstantiatedCallback));
 
