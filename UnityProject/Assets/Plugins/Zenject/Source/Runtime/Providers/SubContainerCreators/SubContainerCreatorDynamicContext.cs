@@ -3,8 +3,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using ModestTree;
-using Zenject.Internal;
 
 namespace Zenject
 {
@@ -29,13 +27,15 @@ namespace Zenject
             bool shouldMakeActive;
             var gameObj = CreateGameObject(parentContext, out shouldMakeActive);
 
-            var context = gameObj.AddComponent<GameObjectContext>();
+            // Create through RunnableContext.CreateComponent to disable auto-run on first injection.
+            // This prevents Construct()->Initialize()->RunInternal() from running immediately.
+            var context = RunnableContext.CreateComponent<GameObjectContext>(gameObj);
 
             AddInstallers(args, context);
 
             context.Install(_container);
 
-            injectAction = () => 
+            injectAction = () =>
             {
                 // Note: We don't need to call ResolveRoots here because GameObjectContext does this for us
                 _container.Inject(context);
