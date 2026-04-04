@@ -1,8 +1,9 @@
+using ModestTree;
 using System;
 using System.IO;
 using System.Reflection;
-using ModestTree;
 using UnityEditor;
+using UnityEditor.Compilation;
 using UnityEngine;
 
 namespace Zenject.ReflectionBaking
@@ -61,6 +62,22 @@ namespace Zenject.ReflectionBaking
 
         public static void TryForceUnityFullCompile()
         {
+            // Prefer public API when available (Unity 2017.1+ / Unity 6)
+            var requestScriptCompilationMethod = typeof(CompilationPipeline).GetMethod(
+                "RequestScriptCompilation",
+                BindingFlags.Static | BindingFlags.Public,
+                null,
+                Type.EmptyTypes,
+                null);
+
+            if (requestScriptCompilationMethod != null)
+            {
+                requestScriptCompilationMethod.Invoke(null, null);
+                UnityEditor.AssetDatabase.Refresh();
+                return;
+            }
+
+            // Fallback for older Unity versions using internal API
             Type compInterface = typeof(UnityEditor.Editor).Assembly.GetType(
                 "UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface");
 
