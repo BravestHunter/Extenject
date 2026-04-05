@@ -27,9 +27,9 @@ namespace Zenject
             bool shouldMakeActive;
             var gameObj = CreateGameObject(parentContext, out shouldMakeActive);
 
-            // Create through RunnableContext.CreateComponent to disable auto-run on first injection.
+            // Create through RunnableContext.CreateComponentDeferred to disable auto-run on first injection.
             // This prevents Construct()->Initialize()->RunInternal() from running immediately.
-            var context = RunnableContext.CreateComponent<GameObjectContext>(gameObj);
+            var context = RunnableContext.CreateComponentDeferred<GameObjectContext>(gameObj);
 
             AddInstallers(args, context);
 
@@ -37,17 +37,24 @@ namespace Zenject
 
             injectAction = () =>
             {
-                // Note: We don't need to call ResolveRoots here because GameObjectContext does this for us
-                _container.Inject(context);
-
-                if (shouldMakeActive && !_container.IsValidating)
+                try
                 {
-#if ZEN_INTERNAL_PROFILING
-                    using (ProfileTimers.CreateTimedBlock("User Code"))
-#endif
+                    // Note: We don't need to call ResolveRoots here because GameObjectContext does this for us
+                    _container.Inject(context);
+
+                    if (shouldMakeActive && !_container.IsValidating)
                     {
-                        gameObj.SetActive(true);
+#if ZEN_INTERNAL_PROFILING
+                        using (ProfileTimers.CreateTimedBlock("User Code"))
+#endif
+                        {
+                            gameObj.SetActive(true);
+                        }
                     }
+                }
+                finally
+                {
+                    RunnableContext.RestoreStaticAutoRun();
                 }
             };
 

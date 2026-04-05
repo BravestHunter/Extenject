@@ -17,7 +17,7 @@ namespace Zenject
         static bool _staticAutoRun = true;
 
         public bool Initialized { get; private set; }
-        
+
 #if UNITY_EDITOR
         // Required for disabling domain reload in enter the play mode feature. See: https://docs.unity3d.com/Manual/DomainReloading.html
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -27,7 +27,7 @@ namespace Zenject
             {
                 return;
             }
-            
+
             _staticAutoRun = true;
         }
 #endif
@@ -36,7 +36,7 @@ namespace Zenject
         protected override void ResetInstanceFields()
         {
             base.ResetInstanceFields();
-            
+
             Initialized = false;
         }
 #endif
@@ -73,6 +73,17 @@ namespace Zenject
             var result = gameObject.AddComponent<T>();
             Assert.That(_staticAutoRun); // Should be reset
             return result;
+        }
+
+        public static T CreateComponentDeferred<T>(GameObject gameObject) where T : RunnableContext
+        {
+            _staticAutoRun = false;
+            return gameObject.AddComponent<T>();
+        }
+
+        public static void RestoreStaticAutoRun()
+        {
+            _staticAutoRun = true;
         }
     }
 }
